@@ -16,10 +16,17 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductOrderSerializer(serializers.ModelSerializer):
+    products_id = serializers.PrimaryKeyRelatedField(source='products', many=True, queryset=Product.objects.all())
+    products = ProductSerializer(many=True, read_only=True)
+    customer_name = serializers.StringRelatedField(source='customer')
+
     def to_internal_value(self, data):
+        data._mutable = True
         if self.context['request'].user.id is None:
+            # pass
             raise Exception('Context object is not have user id')
         user = User.objects.get(id=self.context['request'].user.id)
+        # user = User.objects.get(id=1)
         if user is None:
             raise Exception('User object is None')
         data['customer'] = user.id
@@ -27,7 +34,13 @@ class ProductOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductOrder
-        fields = ('products', 'customer', 'number_of_units', 'is_active', 'delivery_address',)
+        fields = (
+            'products_id', 'products', 'customer_name', 'customer', 'number_of_units', 'is_active',
+            'delivery_address',)
+        extra_kwargs = {
+            'products': {'read_only': True, 'write_only': False},
+            'products_id': {'write_only': True, 'read_only': True}
+        }
 
 
 class BuyProductSerializer(serializers.ModelSerializer):
