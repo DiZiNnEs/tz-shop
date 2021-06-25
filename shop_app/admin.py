@@ -4,6 +4,7 @@ from shop_app.models import (
     Product,
     ProductOrder,
     BuyProduct,
+    Report
 )
 
 
@@ -19,4 +20,9 @@ class ProductOrderAdmin(admin.ModelAdmin):
 
 @admin.register(BuyProduct)
 class BuyProductAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Report)
+class ReportAdmin(admin.ModelAdmin):
     pass
