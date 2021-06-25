@@ -21,7 +21,7 @@ class ProductOrderSerializer(serializers.ModelSerializer):
     customer_name = serializers.StringRelatedField(source='customer')
 
     def to_internal_value(self, data):
-        data._mutable = True
+        data_copy = data.copy()
         if self.context['request'].user.id is None:
             # pass
             raise Exception('Context object is not have user id')
@@ -29,8 +29,8 @@ class ProductOrderSerializer(serializers.ModelSerializer):
         # user = User.objects.get(id=1)
         if user is None:
             raise Exception('User object is None')
-        data['customer'] = user.id
-        return super().to_internal_value(data)
+        data_copy['customer'] = user.id
+        return super().to_internal_value(data_copy)
 
     class Meta:
         model = ProductOrder
@@ -45,15 +45,15 @@ class ProductOrderSerializer(serializers.ModelSerializer):
 
 class BuyProductSerializer(serializers.ModelSerializer):
     def to_internal_value(self, data):
-        data._mutable = True
+        data_copy = data.copy()
         if self.context['request'].user.id is None:
             raise Exception('Context object does not have  have user id')
         user = User.objects.get(id=self.context['request'].user.id)
         if user is None:
             raise Exception('User object is None')
-        data['buyer'] = user.id
+        data_copy['buyer'] = user.id
 
-        return super().to_internal_value(data)
+        return super().to_internal_value(data_copy)
 
     class Meta:
         model = BuyProduct
