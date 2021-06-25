@@ -44,6 +44,7 @@ class ProductOrder(models.Model):
 class BuyProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Продукт')
     buyer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Покупатель товара')
+    is_active = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return f'Покупка товара {self.product.name} от {self.buyer.username}'
