@@ -16,7 +16,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductOrderSerializer(serializers.ModelSerializer):
-    products_id = serializers.PrimaryKeyRelatedField(source='products', many=True, queryset=Product.objects.all())
+    products_id = serializers.PrimaryKeyRelatedField(source='products', many=True, queryset=Product.objects.all(),
+                                                     required=False)
     products = ProductSerializer(many=True, read_only=True)
     customer_name = serializers.StringRelatedField(source='customer')
 
@@ -39,7 +40,7 @@ class ProductOrderSerializer(serializers.ModelSerializer):
             'delivery_address',)
         extra_kwargs = {
             'products': {'read_only': True, 'write_only': False},
-            'products_id': {'write_only': True, 'read_only': True}
+            'products_id': {'required': False}
         }
 
 
