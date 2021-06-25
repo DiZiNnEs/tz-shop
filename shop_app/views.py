@@ -45,11 +45,14 @@ class ProductOrderViewSet(viewsets.ModelViewSet):
                 Product.objects.filter(id=request.data.get(count)).update(number_of_units=result)
         return super().create(request, args, kwargs)
 
-    @action(detail=True, methods=['put', 'patch'])
+    @action(detail=True, methods=['put', 'patch'], url_path='cancel-order')
     def cancel_order(self, request, pk=None):
-        data = self.queryset.filter(id=pk)
-        data.update(is_active=False)
-        return Response(status.HTTP_200_OK)
+        try:
+            data = self.queryset.filter(id=pk)
+            data.update(is_active=False)
+            return Response({'Order cancelled'}, status.HTTP_200_OK)
+        except:
+            return Response({'Order does not exist or not found'}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class BuyProductViewSet(viewsets.ModelViewSet):
