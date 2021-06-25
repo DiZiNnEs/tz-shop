@@ -11,7 +11,7 @@ class Product(models.Model):
                                      help_text='себестоимость товара')
     price = models.DecimalField(max_digits=100, decimal_places=2, verbose_name='Цена товара:')
     number_of_units = models.BigIntegerField(verbose_name='Количество товара')
-    slug = models.SlugField(verbose_name='Slug товара:')
+    slug = models.SlugField(verbose_name='Slug товара')
 
     def __str__(self) -> str:
         return f'Товар {self.name}'
@@ -33,10 +33,8 @@ class ProductOrder(models.Model):
     delivery_address = models.CharField(max_length=256, verbose_name='Адресс доставки')
 
     def __str__(self) -> str:
-        first = self.products.first()
-        last = self.products.last()
-        first_product = getattr(first, 'first', 'продукт')
-        last_product = getattr(last, 'last', 'продукт')
+        first_product = self.products.first()
+        last_product = self.products.last()
         return f'Заказ на {first_product}, {last_product} и другие ... от {self.customer.username}'
 
     class Meta:
@@ -58,3 +56,23 @@ class BuyProduct(models.Model):
         db_table = 'buy_product'
         verbose_name = 'Покупа товара'
         verbose_name_plural = 'Покупка товаров'
+
+
+class Report(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name='Продукт', related_name='product')
+    revenue = models.DecimalField(max_digits=100, decimal_places=2, null=True, blank=True,
+                                  verbose_name='Выручка от продукт')
+    profit = models.DecimalField(max_digits=100, decimal_places=2, null=True, blank=True,
+                                 verbose_name='Прибыль от продукт')
+    number_of_units_sold = models.BigIntegerField(verbose_name='Количество проданных единиц товара/продукта',
+                                                  help_text='проданные единицы товара')
+    number_of_returns = models.BigIntegerField(verbose_name='Количество возвратов товара/продукта',
+                                               help_text='количество возврата')
+
+    def __str__(self) -> str:
+        return f'Отчёт по {self.product.name}'
+
+    class Meta:
+        db_table = 'report'
+        verbose_name = 'Отчеты'
+        verbose_name_plural = 'Отчеты'
