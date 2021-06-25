@@ -4,7 +4,8 @@ from rest_framework import serializers
 from shop_app.models import (
     Product,
     ProductOrder,
-    BuyProduct
+    BuyProduct,
+    Report
 )
 
 
@@ -59,3 +60,9 @@ class BuyProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = BuyProduct
         fields = ('product', 'buyer', 'is_active', 'quantity')
+
+
+class ReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = ('product', 'revenue', 'profit', 'number_of_units_sold', 'number_of_returns',)
