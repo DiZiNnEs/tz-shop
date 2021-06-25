@@ -34,13 +34,15 @@ class ProductOrderViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         number_of_units_order = request.data.get('number_of_units')
-        product = Product.objects.get(id=request.data.get('products_id'))
-        numbers_of_units_product = product.number_of_units
-        if int(numbers_of_units_product) <= int(number_of_units_order):
-            return Response({'Not enough products'}, status=status.HTTP_204_NO_CONTENT)
-        else:
-            result = int(numbers_of_units_product) - int(number_of_units_order)
-            Product.objects.filter(id=request.data.get('products_id')).update(number_of_units=result)
+        count_of_product = request.data.get('products')
+        for count in count_of_product:
+            product = Product.objects.get(id=count)
+            numbers_of_units_product = product.number_of_units
+            if int(numbers_of_units_product) < int(number_of_units_order):
+                return Response({'Not enough products'}, status=status.HTTP_204_NO_CONTENT)
+            else:
+                result = int(numbers_of_units_product) - int(number_of_units_order)
+                Product.objects.filter(id=request.data.get(count)).update(number_of_units=result)
         return super().create(request, args, kwargs)
 
     @action(detail=True, methods=['put', 'patch'])
