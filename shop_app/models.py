@@ -33,7 +33,11 @@ class ProductOrder(models.Model):
     delivery_address = models.CharField(max_length=256, verbose_name='Адресс доставки')
 
     def __str__(self) -> str:
-        return f'Заказ на {self.products.first().name}, {self.products.last()} и другие ... от {self.customer.username}'
+        first = self.products.first()
+        last = self.products.last()
+        first_product = getattr(first, 'first', 'продукт')
+        last_product = getattr(last, 'last', 'продукт')
+        return f'Заказ на {first_product}, {last_product} и другие ... от {self.customer.username}'
 
     class Meta:
         db_table = 'product_order'
