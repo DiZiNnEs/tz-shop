@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -6,11 +6,13 @@ from shop_app.models import (
     Product,
     ProductOrder,
     BuyProduct,
+    Report,
 )
 from shop_app.serializers import (
     ProductSerializer,
     ProductOrderSerializer,
     BuyProductSerializer,
+    ReportSerializer
 )
 
 
@@ -84,3 +86,8 @@ class BuyProductViewSet(viewsets.ModelViewSet):
             return Response({'Order cancelled'}, status.HTTP_200_OK)
         except:
             return Response({'Order does not exist or not found'}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ReportViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
+    queryset = Report.objects.all()
+    serializer_class = ReportSerializer
