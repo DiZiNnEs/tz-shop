@@ -31,6 +31,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 class ProductOrderViewSet(viewsets.ModelViewSet):
+    report = Report.objects.all()
     queryset = ProductOrder.objects.all()
     serializer_class = ProductOrderSerializer
 
@@ -41,11 +42,23 @@ class ProductOrderViewSet(viewsets.ModelViewSet):
             product = Product.objects.get(id=count)
             numbers_of_units_product = product.number_of_units
             if int(numbers_of_units_product) < int(number_of_units_order):
-                return Response({f'Not enough product quantity {count_of_product[count]}'},
+                return Response({f'Not enough product quantity {product.name} product'},
                                 status=status.HTTP_204_NO_CONTENT)
             else:
                 result = int(numbers_of_units_product) - int(number_of_units_order)
                 Product.objects.filter(id=request.data.get(count)).update(number_of_units=result)
+                try:
+                    if self.report.get(product=product):
+                        report = self.report.filter(product=product)
+                        report.update(product=product, revenue=report.get().revenue + product.price,
+                                      profit=report.get().profit + product.cost_price,
+                                      number_of_units_sold=report.get().number_of_units_sold + number_of_units_order,
+                                      number_of_returns=report.get().number_of_returns)
+                except :  # DoesNotExist
+                    self.report.create(product=product, revenue=product.price,
+                                       profit=product.cost_price,
+                                       number_of_units_sold=number_of_units_order,
+                                       number_of_returns=0)
         return super().create(request, args, kwargs)
 
     @action(detail=True, methods=['put', 'patch'], url_path='cancel-order')
