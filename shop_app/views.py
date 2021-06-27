@@ -87,14 +87,11 @@ class BuyProductViewSet(viewsets.ModelViewSet):
     def cancel_order(self, request, pk=None):
         if pk is None:
             return Response({'Order id not transferred'}, status.HTTP_400_BAD_REQUEST)
-        # elif self.queryset.filter(id=pk)._db is None: # TODO: проверять существует ли такая запись или нет
-        #     return Response({'QueryDict is None because order by PK does not exist'}, status.HTTP_400_BAD_REQUEST)
         try:
-            # product = Product.objects.get(id=pk)
             product_buy = self.queryset.filter(id=pk)
             product_buy.update(is_active=False)
             product = self.queryset.get(id=pk).product
-            update_report(product=product, report=self.report, option=2)  # TODO: Чекнуть админку
+            update_report(product=product, report=self.report, option=2)
             return Response({'Order cancelled'}, status.HTTP_200_OK)
         except:
             return Response({'Order does not exist or not found'}, status.HTTP_500_INTERNAL_SERVER_ERROR)
