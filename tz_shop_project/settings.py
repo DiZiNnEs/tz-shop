@@ -9,8 +9,12 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
+import environ
 
 from pathlib import Path
+
+# TODO: оптимизироват запросы с возможностью ORM, `UPDATE` и `CREATE` методы так же смотреть и оптимизировать
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,12 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-xq7(buz-)mxh1-%q8pbm884pqi+j6mni$7z%w2oxhz1u$#b#r8'
+env = environ.Env()
+environ.Env.read_env('.env.dev')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = os.environ.get('SECRET_KEY', 'foo')
 
-ALLOWED_HOSTS = ['*']
+DEBUG = os.environ.get('DEBUG', True)
+
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split()
 
 # Application definition
 
@@ -80,8 +86,12 @@ WSGI_APPLICATION = 'tz_shop_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.environ.get('DB_ENGINE', "django.db.backends.sqlite3"),
+        'NAME': os.environ.get('DB_DATABASE', BASE_DIR / 'db.sqlite3'),
+        'USER': os.environ.get('DB_USER', 'user'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'password'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 

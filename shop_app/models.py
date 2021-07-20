@@ -24,7 +24,7 @@ class Product(models.Model):
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
 
-
+# TODO: убрать `is_active` и добавить что-то другое вроде В ПУТИ, В ОЖИДАНИИ, В ОБРАБОТКЕ
 class ProductOrder(models.Model):
     products = models.ManyToManyField(Product, verbose_name='Продукт')
     customer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Заказчик')

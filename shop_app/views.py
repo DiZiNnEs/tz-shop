@@ -17,6 +17,8 @@ from shop_app.serializers import (
 
 from shop_app.services import update_report
 
+# TODO: оптимизироват запросы с возможностью ORM, `UPDATE` и `CREATE` методы так же смотреть и оптимизировать
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()

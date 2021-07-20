@@ -10,7 +10,7 @@ celery = "*"
 django-redis = "*"
 django-celery-beat = "*"
 django-celery-results = "*"
-
+django-environ = "*"
 
 [dev-packages]
 
